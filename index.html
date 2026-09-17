@@ -3,27 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Grade 5</title>
-</head>
+    <title>Grade 5 Study Resources</title>
+    <style>
+        :root {
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #e2e8f0;
+            --radius: 12px;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        h1 {
+            font-size: 2.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.025em;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #1e293b;
+        }
+
+        .resource-list {
+            list-style: none;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1rem;
+        }
+
+        .resource-card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .resource-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.25rem;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 1rem;
+            height: 100%;
+        }
+
+        .resource-link:hover {
+            color: var(--primary);
+        }
+
+        .arrow-icon {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: transform 0.2s ease;
+        }
+
+        .resource-link:hover .arrow-icon {
+            transform: translateX(4px);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+        }
+    </style>
+</head>
 <body>
 
-    <h1>Grade 5</h1>
+    <div class="container">
+        <header>
+            <h1>Grade 5 Question Bank</h1>
+            <p class="subtitle">Access practice materials and study lists</p>
+        </header>
 
-    <h2>English</h2>
+        <main>
+            <section>
+                <h2 class="section-title">
+                    📚 English
+                </h2>
+                
+                <ul class="resource-list">
+                    <li class="resource-card">
+                        <a href="English/Vocabulary/Hannibal-L1.html" class="resource-link">
+                            <span>Vocabulary Hannibal — List 1</span>
+                            <svg class="arrow-icon" viewBox="0 0 24 24">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </li>
+                    <li class="resource-card">
+                        <a href="English/Vocabulary/Hannibal-L2.html" class="resource-link">
+                            <span>Vocabulary Hannibal — List 2</span>
+                            <svg class="arrow-icon" viewBox="0 0 24 24">
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                                <polyline points="12 5 19 12 12 19"></polyline>
+                            </svg>
+                        </a>
+                    </li>
+                </ul>
+            </section>
+        </main>
 
-    <ul>
-        <li>
-            <a href="English/Vocabulary/Hannibal-L1.html">
-               Vocabulary Hannibal - List 1
-            </a>
-        </li>
-        <li>
-            <a href="English/Vocabulary/Hannibal-L2.html">
-               Vocabulary Hannibal - List 2
-            </a>
-        </li>
-    </ul>
+        <footer>
+            <p>&copy; SABIS QBank Grade 5 Resources</p>
+        </footer>
+    </div>
 
 </body>
 </html>
