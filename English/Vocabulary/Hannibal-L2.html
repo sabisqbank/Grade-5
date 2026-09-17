@@ -1,0 +1,999 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hannibal Vocabulary Challenge – List 1</title>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-color: #f3f4f6;
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --success: #10b981;
+      --error: #ef4444;
+      --accent: #f59e0b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .game-container {
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 700px;
+      padding: 30px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    h1 {
+      font-size: 1.8rem;
+      color: var(--primary);
+      margin-bottom: 5px;
+    }
+
+    .subtitle {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-weight: 600;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 10px;
+      background-color: #e5e7eb;
+      border-radius: 5px;
+      overflow: hidden;
+      margin-bottom: 25px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background-color: var(--primary);
+      transition: width 0.3s ease;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    .mode-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .btn {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 14px 20px;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: background-color 0.2s, transform 0.1s;
+      width: 100%;
+      text-align: center;
+    }
+
+    .btn:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-accent {
+      background-color: var(--accent);
+    }
+
+    .btn-accent:hover {
+      background-color: #d97706;
+    }
+
+    .word-card {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .target-word {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-transform: lowercase;
+    }
+
+    .context-sentence {
+      font-style: italic;
+      color: var(--text-muted);
+      margin-top: 8px;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      background: #f9fafb;
+      padding: 10px 15px;
+      border-radius: 8px;
+      border-left: 4px solid var(--primary);
+    }
+
+    .question-prompt {
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+
+    .options-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .option-btn {
+      background-color: #f9fafb;
+      border: 2px solid #e5e7eb;
+      color: var(--text-main);
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      line-height: 1.3;
+    }
+
+    .option-btn:hover:not(.disabled) {
+      border-color: var(--primary);
+      background-color: #eeeffe;
+    }
+
+    .option-btn .label {
+      font-weight: 700;
+      margin-right: 12px;
+      background: #e5e7eb;
+      padding: 4px 8px;
+      border-radius: 6px;
+      color: var(--text-main);
+      flex-shrink: 0;
+    }
+
+    .option-btn.correct {
+      background-color: #d1fae5;
+      border-color: var(--success);
+      color: #065f46;
+    }
+
+    .option-btn.correct .label {
+      background-color: var(--success);
+      color: white;
+    }
+
+    .option-btn.incorrect {
+      background-color: #fee2e2;
+      border-color: var(--error);
+      color: #991b1b;
+    }
+
+    .option-btn.incorrect .label {
+      background-color: var(--error);
+      color: white;
+    }
+
+    .option-btn.disabled {
+      cursor: default;
+    }
+
+    .feedback-banner {
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .feedback-banner.correct {
+      background-color: #d1fae5;
+      color: #065f46;
+      border: 1px solid var(--success);
+    }
+
+    .feedback-banner.incorrect {
+      background-color: #fee2e2;
+      color: #991b1b;
+      border: 1px solid var(--error);
+    }
+
+    .feedback-title {
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-bottom: 5px;
+    }
+
+    .feedback-details {
+      font-size: 0.95rem;
+    }
+
+    .results-card {
+      text-align: center;
+      padding: 10px 0;
+    }
+
+    .badge-icon {
+      font-size: 4rem;
+      margin-bottom: 10px;
+    }
+
+    .score-percentage {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+
+    .performance-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .stat-box {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #e5e7eb;
+    }
+
+    .stat-value {
+      font-size: 1.2rem;
+      font-weight: 700;
+    }
+
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="game-container">
+    <header>
+      <h1>Hannibal Vocabulary Challenge</h1>
+      <p class="subtitle">List 1</p>
+    </header>
+
+    <div id="screen-menu" class="screen active">
+      <div class="mode-buttons">
+        <button class="btn" onclick="startGame('quick')">⚡ Quick Quiz (10 Words)</button>
+        <button class="btn" onclick="startGame('full')">🏆 Full Challenge (All 43 Words)</button>
+        <button class="btn btn-accent" onclick="startGame('practice')">📖 Practice Mode (No Pressure)</button>
+      </div>
+    </div>
+
+    <div id="screen-game" class="screen">
+      <div class="status-bar">
+        <span id="question-tracker">Question 1 of 43</span>
+        <span id="score-tracker">Score: 0</span>
+      </div>
+      <div class="progress-bar-container">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+
+      <div class="word-card">
+        <div id="target-word" class="target-word">ease</div>
+        <div id="context-sentence" class="context-sentence">“Rome able to fight and win land battles with ease”</div>
+      </div>
+
+      <div class="question-prompt">What does this word mean?</div>
+
+      <div id="options-container" class="options-grid"></div>
+
+      <div id="feedback-banner" class="feedback-banner">
+        <div id="feedback-title" class="feedback-title"></div>
+        <div id="feedback-details" class="feedback-details"></div>
+      </div>
+
+      <button id="next-btn" class="btn" style="display: none;" onclick="nextQuestion()">Next Question →</button>
+    </div>
+
+    <div id="screen-results" class="screen">
+      <div class="results-card">
+        <div id="badge-icon" class="badge-icon">🏆</div>
+        <div id="performance-title" class="performance-title">Vocabulary Master!</div>
+        <div id="score-percentage" class="score-percentage">100%</div>
+
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div id="stat-total" class="stat-value">43</div>
+            <div class="stat-label">Total</div>
+          </div>
+          <div class="stat-box">
+            <div id="stat-correct" class="stat-value" style="color: var(--success);">43</div>
+            <div class="stat-label">Correct</div>
+          </div>
+          <div class="stat-box">
+            <div id="stat-incorrect" class="stat-value" style="color: var(--error);">0</div>
+            <div class="stat-label">Incorrect</div>
+          </div>
+        </div>
+
+        <div class="mode-buttons">
+          <button id="review-btn" class="btn btn-accent" style="display: none;" onclick="startReviewMode()">🔁 Review Mistakes</button>
+          <button class="btn" onclick="showMenu()">🏠 Return to Menu</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const vocabData = [
+      {
+        word: "ease",
+        context: "“Rome able to fight and win land battles with ease”",
+        correct: "relief or freedom from difficulty or discomfort or to reduce pain",
+        distractors: [
+          "extreme confusion or sudden panic brought on by unexpected danger",
+          "a heavy burden that causes intense stress during difficult tasks",
+          "quick movement with loud noise created by large moving groups"
+        ]
+      },
+      {
+        word: "impromptu",
+        context: "“Marcus nodded, intrigued by this impromptu geography lesson”",
+        correct: "without any rehearsal or practice",
+        distractors: [
+          "planned carefully over many years",
+          "written down in official manuals",
+          "taught by a professional scholar"
+        ]
+      },
+      {
+        word: "intrigued",
+        context: "“Marcus nodded, intrigued by this impromptu geography lesson”",
+        correct: "to interest somebody very much or to make secret plan",
+        distractors: [
+          "to frighten someone deeply through sudden unexpected noise",
+          "to bore someone completely by giving overly long speeches",
+          "to warn someone clearly about impending military danger"
+        ]
+      },
+      {
+        word: "landed",
+        context: "“Carthage was a trading city, and many ships filled with goods landed and exchanged supplies ”",
+        correct: "to bring or arrive in ship or aircraft",
+        distractors: [
+          "to sink deep into the cold sea ocean",
+          "to sail rapidly across wide waters",
+          "to repair damaged decks on a boat"
+        ]
+      },
+      {
+        word: "pains",
+        context: "“Although it pains me, Rome has won Hannibal said”",
+        correct: "to hurt",
+        distractors: [
+          "to help",
+          "to heal",
+          "to cheer"
+        ]
+      },
+      {
+        word: "dimmed",
+        context: "“The light dimmed in the small room as the sun set ”",
+        correct: "to decrease the amount of light",
+        distractors: [
+          "to increase the level of sound",
+          "to change the direction of wind",
+          "to multiply the speed of heat"
+        ]
+      },
+      {
+        word: "strategy",
+        context: "“I was able to crush the Romans, with clever strategy and better forces”",
+        correct: "plan or policy to achieve something",
+        distractors: [
+          "sudden stroke of random good luck",
+          "long journey through harsh lands",
+          "fierce duel between two enemies"
+        ]
+      },
+      {
+        word: "candles",
+        context: "“ Marcus lit some candles while Hannibal drank more water  ”",
+        correct: "stick of wax with a wick through it that give light when brining",
+        distractors: [
+          "small wooden torch used for signaling across long distances outdoors",
+          "glass lamp filled with burning oil to light up dark pathways",
+          "metal container holding heated coals to provide room warmth"
+        ]
+      },
+      {
+        word: "convenient",
+        context: "“ it was a convenient place for trade, and we had every right to the land ”",
+        correct: "easy to use or reach",
+        distractors: [
+          "hard to locate on maps",
+          "very costly to manage",
+          "filled with hidden traps"
+        ]
+      },
+      {
+        word: "equal",
+        context: "“ my father was fighting them with equal power on land”",
+        correct: "the same in amount, size, value",
+        distractors: [
+          "much larger in total weight",
+          "far weaker than the rival",
+          "totally unique in appearance"
+        ]
+      },
+      {
+        word: "footholds",
+        context: "“ He was able to gain footholds in Sicily and was doing very well”",
+        correct: "place to put your foot when climbing",
+        distractors: [
+          "deep trap dug to catch unwary foes",
+          "steep cliff impossible to scale up",
+          "wide river blocking military road"
+        ]
+      },
+      {
+        word: "oddly",
+        context: "“ Sicily is an oddly shaped triangle oof an island “",
+        correct: "strangely , unevenly",
+        distractors: [
+          "neatly , perfectly",
+          "softly , gracefully",
+          "swiftly , suddenly"
+        ]
+      },
+      {
+        word: "plotted",
+        context: "“ my father was fighting them with equal power on land, the Roman plotted”",
+        correct: "to make secret plan",
+        distractors: [
+          "to declare open war",
+          "to march away fast",
+          "to surrender tools"
+        ]
+      },
+      {
+        word: "twenty-odd",
+        context: "“ Most of the battles during the twenty-odd years of war were fought on water”",
+        correct: "slightly more than twenty",
+        distractors: [
+          "exactly equal to twenty",
+          "much less than twenty",
+          "nearly forty in total"
+        ]
+      },
+      {
+        word: "engineers",
+        context: "“ These Romans are great engineers ”",
+        correct: "an expert in engineering building and construction",
+        distractors: [
+          "a warrior who leads infantry forces into battle",
+          "a merchant selling valuable goods from foreign lands",
+          "a ruler managing civic laws and local governance"
+        ]
+      },
+      {
+        word: "reassemble",
+        context: "“ took a part all of the pieces, and learn to reassemble them”",
+        correct: "to gather again",
+        distractors: [
+          "to break apart",
+          "to throw away",
+          "to hide deeply"
+        ]
+      },
+      {
+        word: "bushy",
+        context: "“ Hamilcar’s eyes, though hidden beneath bushy eyebrows, seemed troubled”",
+        correct: "resembling a bush, or thick and messy",
+        distractors: [
+          "extremely thin, pale, and barely visible",
+          "perfectly smooth, flat, and combed neat",
+          "completely shaved down short and bald"
+        ]
+      },
+      {
+        word: "dealt",
+        context: "“ the North Africans had been dealt an even greater below”",
+        correct: "to inflict, or to give out",
+        distractors: [
+          "to avoid, or to run away",
+          "to repair, or to fix up",
+          "to forget, or to leave"
+        ]
+      },
+      {
+        word: "frustrated",
+        context: "“ He knew that his father was and frustrated”",
+        correct: "feeling annoyed, upset or agitated because you can’t control or change situation ",
+        distractors: [
+          "feeling calm, peaceful and completely relaxed after finishing hard work",
+          "feeling joyful, eager and ready to celebrate a massive group victory",
+          "feeling sleepy, tired and ready to rest after walking long miles"
+        ]
+      },
+      {
+        word: "supply",
+        context: "“the Romans blocked all supply and fighting ships ”",
+        correct: "stock of something, or to provide",
+        distractors: [
+          "secret code, or to translate text",
+          "group of old books, or to study",
+          "crew of sailors, or to navigate"
+        ]
+      },
+      {
+        word: "disobey",
+        context: "“ How could they disobey a direct order from this commander? ”",
+        correct: "to refuse an order",
+        distractors: [
+          "to execute a task",
+          "to listen to advice",
+          "to reward a officer"
+        ]
+      },
+      {
+        word: "inquired",
+        context: "“ “Father?” Hannibal inquired. “Where are we going?” ”",
+        correct: "to ask, to seek for information",
+        distractors: [
+          "to yell, to scream out in rage",
+          "to answer, to state clear facts",
+          "to whisper, to keep private news"
+        ]
+      },
+      {
+        word: "mercenaries",
+        context: "“ Rome took Sardinia and Corsica from us while we were busy with the mercenaries ”",
+        correct: "professional soldier who will fight for any country that will pay",
+        distractors: [
+          "peasant farmer who protects small villages from local bandits",
+          "wealthy trader who owns cargo ships traveling overseas routes",
+          "royal officer who trains young recruits for kingdom defense"
+        ]
+      },
+      {
+        word: "repeatedly",
+        context: "“ Hamilcar cleaned and released his fists repeatedly”",
+        correct: "over and over again",
+        distractors: [
+          "only a single time",
+          "rarely and slowly",
+          "without any sound"
+        ]
+      },
+      {
+        word: "stray",
+        context: "“ A few stray hairs floated from Hamilcar’s face as they continued their walk”",
+        correct: "lost, isolated",
+        distractors: [
+          "tied, connected",
+          "clean, washed",
+          "bright, visible"
+        ]
+      },
+      {
+        word: "weakness",
+        context: "“ Rome used our weakness against us ”",
+        correct: "feebleness, or lack of strength",
+        distractors: [
+          "power, or high physical energy",
+          "wisdom, or vast domain mastery",
+          "wealth, or abundance of gold"
+        ]
+      },
+      {
+        word: "depend",
+        context: "“ Hamilcar said,  I hate to depend on men from foreign lands  ”",
+        correct: "to rely on",
+        distractors: [
+          "to attack",
+          "to lead on",
+          "to pay for"
+        ]
+      },
+      {
+        word: "marble",
+        context: "“ Merchants peddled wares from across the known world: marble from the islands in the Aegean Sea ”",
+        correct: "hard kind of limestone that is polished and used for building",
+        distractors: [
+          "soft red clay that is molded easily to create drinking cups",
+          "precious yellow gold metal that is melted down into coinage",
+          "heavy dark timber wood that is cut down for ship building"
+        ]
+      },
+      {
+        word: "peddled",
+        context: "“ Merchants peddled wares from across the known world”",
+        correct: "to sell thing",
+        distractors: [
+          "to buy items",
+          "to steal goods",
+          "to store food"
+        ]
+      },
+      {
+        word: "pitch",
+        context: "“ The boy’s voice rose in volume and pitch as he spoke ”",
+        correct: "the degree of highness or lowness in tone",
+        distractors: [
+          "the overall speed of word pronunciation",
+          "the total length of a spoken sentence",
+          "the exact accent used when talking"
+        ]
+      },
+      {
+        word: "population",
+        context: "“ I hate to depend on men from foreign lands, but our population is too small”",
+        correct: "the number of people who live in a particular country, town",
+        distractors: [
+          "the area of farmland that is owned by a city government",
+          "the amount of warships that sail together in fleet unit",
+          "the weight of silver stored safely inside royal vault"
+        ]
+      },
+      {
+        word: "pottery",
+        context: "“Merchants peddled wares from across the known world: Greek pottery”",
+        correct: "plates, bowls made from baked clay",
+        distractors: [
+          "warm, soft coats made from animal fur",
+          "sharp, long spears forged from bronze",
+          "bright, fine rings crafted from silver"
+        ]
+      },
+      {
+        word: "revolted",
+        context: "“ maybe they revolted so that Rome could take Sardinia, Corsica, and Sicily from us”",
+        correct: "to rebel, or to disgust or horrify somebody",
+        distractors: [
+          "to agree, or to assist someone in work",
+          "to retreat, or to march back home fast",
+          "to build, or to construct large walls"
+        ]
+      },
+      {
+        word: "shrill",
+        context: "“ his final sentence seemed shrill, like the cry of small bird”",
+        correct: "high and piercing",
+        distractors: [
+          "low and booming",
+          "soft and calming",
+          "slow and steady"
+        ]
+      },
+      {
+        word: "spies",
+        context: "“ Maybe they did not fight well for Carthage because they were spies ”",
+        correct: "person who secretly collect information",
+        distractors: [
+          "warrior who leads front line assault",
+          "sailor who navigates large sea vessel",
+          "merchant who trades goods for profit"
+        ]
+      },
+      {
+        word: "tin",
+        context: "“ precious silver and tin from Spain ”",
+        correct: "soft, white metal container for food",
+        distractors: [
+          "hard, dark stone mined from earth",
+          "thick, rich soil used for farming",
+          "tough, dry wood harvested in forest"
+        ]
+      },
+      {
+        word: "trick",
+        context: "“ perhaps it was a trick ”",
+        correct: "something done to deceive or fool somebody",
+        distractors: [
+          "a gift given to reward honest behavior",
+          "a task completed with great physical effort",
+          "a speech delivered to explain complex facts"
+        ]
+      },
+      {
+        word: "volume",
+        context: "“ The boy’s voice rose in volume and pitch as he spoke”",
+        correct: "loudness",
+        distractors: [
+          "swiftness",
+          "sweetness",
+          "roughness"
+        ]
+      },
+      {
+        word: "logical",
+        context: "“ You have a very logical mind, you can analyze situations more clearly than army offices ”",
+        correct: "reasonable, or sensible",
+        distractors: [
+          "careless, or forgetful",
+          "fearful, or terrified",
+          "stubborn, or short-tempered"
+        ]
+      },
+      {
+        word: "organize",
+        context: "“ I can organize supplies, gather weapons ”",
+        correct: "to put something in order",
+        distractors: [
+          "to break items apart fast",
+          "to throw away extra food",
+          "to hide tools underground"
+        ]
+      },
+      {
+        word: "reclaim",
+        context: "“ Hamilcar had decided that Carthage could not reclaim the islands the city-state had lost to Rome ”",
+        correct: "to seek the return of one’s property, or to make something usable",
+        distractors: [
+          "to sell off ancient land possessions, or to abandon old homes",
+          "to burn down enemy military fortifications, or to break alliances",
+          "to map out uncharted oceanic passages, or to establish colonies"
+        ]
+      },
+      {
+        word: "straits",
+        context: "“ they could cross into Spain via the straits of Gibraltar”",
+        correct: "narrow stretch of water connecting two seas",
+        distractors: [
+          "tall range of mountains splitting land",
+          "wide area of desert filled with sand",
+          "deep valley carved between two hills"
+        ]
+      },
+      {
+        word: "via",
+        context: "“they could cross into Spain via the straits of Gibraltar”",
+        correct: "going through, or passing by",
+        distractors: [
+          "moving away, or steering clear",
+          "stopping near, or resting at",
+          "fighting against, or opposing"
+        ]
+      }
+    ];
+
+    let currentMode = 'full';
+    let activeQuizList = [];
+    let currentIndex = 0;
+    let score = 0;
+    let incorrectWords = [];
+    let isAnswered = false;
+
+    function shuffle(array) {
+      let arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function showMenu() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-menu').classList.add('active');
+    }
+
+    function startGame(mode) {
+      currentMode = mode;
+      score = 0;
+      currentIndex = 0;
+      incorrectWords = [];
+
+      if (mode === 'quick') {
+        activeQuizList = shuffle(vocabData).slice(0, 10);
+      } else {
+        activeQuizList = shuffle(vocabData);
+      }
+
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-game').classList.add('active');
+      
+      loadQuestion();
+    }
+
+    function startReviewMode() {
+      activeQuizList = shuffle([...incorrectWords]);
+      incorrectWords = [];
+      score = 0;
+      currentIndex = 0;
+      currentMode = 'review';
+
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-game').classList.add('active');
+
+      loadQuestion();
+    }
+
+    function loadQuestion() {
+      isAnswered = false;
+      const currentItem = activeQuizList[currentIndex];
+
+      document.getElementById('question-tracker').textContent = `Question ${currentIndex + 1} of ${activeQuizList.length}`;
+      document.getElementById('score-tracker').textContent = currentMode === 'practice' ? `Practice Mode` : `Score: ${score}`;
+      
+      const progressPercent = ((currentIndex) / activeQuizList.length) * 100;
+      document.getElementById('progress-bar').style.width = `${progressPercent}%`;
+
+      document.getElementById('target-word').textContent = currentItem.word;
+      document.getElementById('context-sentence').textContent = currentItem.context;
+
+      document.getElementById('feedback-banner').style.display = 'none';
+      document.getElementById('next-btn').style.display = 'none';
+
+      const options = shuffle([
+        { text: currentItem.correct, isCorrect: true },
+        { text: currentItem.distractors[0], isCorrect: false },
+        { text: currentItem.distractors[1], isCorrect: false },
+        { text: currentItem.distractors[2], isCorrect: false }
+      ]);
+
+      const container = document.getElementById('options-container');
+      container.innerHTML = '';
+
+      const labels = ['A', 'B', 'C', 'D'];
+      options.forEach((opt, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'option-btn';
+        btn.innerHTML = `<span class="label">${labels[index]}</span> ${opt.text}`;
+        btn.onclick = () => selectAnswer(btn, opt.isCorrect, currentItem);
+        container.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(selectedBtn, isCorrect, item) {
+      if (isAnswered) return;
+      isAnswered = true;
+
+      const allBtns = document.querySelectorAll('.option-btn');
+      allBtns.forEach(btn => btn.classList.add('disabled'));
+
+      const banner = document.getElementById('feedback-banner');
+      const title = document.getElementById('feedback-title');
+      const details = document.getElementById('feedback-details');
+
+      if (isCorrect) {
+        selectedBtn.classList.add('correct');
+        banner.className = 'feedback-banner correct';
+        title.textContent = '🎉 Correct! Great job!';
+        details.textContent = `"${item.word}" means: ${item.correct}`;
+        if (currentMode !== 'practice') score++;
+      } else {
+        selectedBtn.classList.add('incorrect');
+        
+        allBtns.forEach(btn => {
+          if (btn.textContent.includes(item.correct)) {
+            btn.classList.add('correct');
+          }
+        });
+
+        banner.className = 'feedback-banner incorrect';
+        title.textContent = '❌ Not quite!';
+        details.innerHTML = `<strong>Correct answer:</strong> ${item.correct}`;
+        
+        if (!incorrectWords.some(w => w.word === item.word)) {
+          incorrectWords.push(item);
+        }
+      }
+
+      banner.style.display = 'block';
+      document.getElementById('next-btn').style.display = 'block';
+      document.getElementById('score-tracker').textContent = currentMode === 'practice' ? `Practice Mode` : `Score: ${score}`;
+    }
+
+    function nextQuestion() {
+      currentIndex++;
+      if (currentIndex < activeQuizList.length) {
+        loadQuestion();
+      } else {
+        showResults();
+      }
+    }
+
+    function showResults() {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('screen-results').classList.add('active');
+
+      const total = activeQuizList.length;
+      const percentage = Math.round((score / total) * 100);
+
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-correct').textContent = score;
+      document.getElementById('stat-incorrect').textContent = total - score;
+      document.getElementById('score-percentage').textContent = `${percentage}%`;
+
+      let badge = '🏆';
+      let title = 'Vocabulary Master!';
+
+      if (percentage >= 90) {
+        badge = '🏆';
+        title = 'Vocabulary Master!';
+      } else if (percentage >= 80) {
+        badge = '🌟';
+        title = 'Excellent!';
+      } else if (percentage >= 70) {
+        badge = '👍';
+        title = 'Good Job!';
+      } else if (percentage >= 60) {
+        badge = '📚';
+        title = 'Keep Practicing!';
+      } else {
+        badge = '💪';
+        title = 'Keep Learning!';
+      }
+
+      document.getElementById('badge-icon').textContent = badge;
+      document.getElementById('performance-title').textContent = title;
+
+      const reviewBtn = document.getElementById('review-btn');
+      if (incorrectWords.length > 0) {
+        reviewBtn.style.display = 'block';
+        reviewBtn.textContent = `🔁 Review Mistakes (${incorrectWords.length})`;
+      } else {
+        reviewBtn.style.display = 'none';
+      }
+    }
+  </script>
+</body>
+</html>
