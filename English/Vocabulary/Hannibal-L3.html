@@ -366,6 +366,76 @@
       padding: 20px;
     }
   }
+  .premium-access {
+    max-width: 520px;
+    margin: 25px auto;
+    font-family: Arial, sans-serif;
+}
+
+.premium-button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    padding: 25px 20px;
+    text-align: center;
+    text-decoration: none;
+    color: #ffffff;
+    background: linear-gradient(135deg, #1e3a8a, #2563eb);
+    border: 2px solid #93c5fd;
+    border-radius: 16px;
+    box-shadow: 0 6px 16px rgba(30, 58, 138, 0.2);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.premium-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 22px rgba(30, 58, 138, 0.28);
+}
+
+.premium-icon {
+    font-size: 30px;
+}
+
+.premium-title {
+    font-size: 22px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.premium-description {
+    font-size: 15px;
+    line-height: 1.6;
+    color: #eff6ff;
+}
+
+.premium-cta {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    margin-top: 5px;
+    padding: 13px 10px;
+    background: #16a34a;
+    border-radius: 9px;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.5;
+}
+
+.premium-button:hover .premium-cta {
+    background: #15803d;
+}
+
+@media (max-width: 480px) {
+    .premium-title {
+        font-size: 19px;
+    }
+
+    .premium-description,
+    .premium-cta {
+        font-size: 14px;
+    }
+}
 </style>
 </head>
 <body>
@@ -382,14 +452,26 @@
         <h3>⚡ Quick Quiz</h3>
         <p>10 random words for a quick vocabulary check.</p>
       </div>
-      <div class="purchase-section">
-          <h3>Unlock the Complete Vocabulary Challenge!</h3>
-          <p>
-              Get full access to all 43 vocabulary words,
-            including interactive quizzes, instant feedback,
-             and mistake review.
-          </p>
-      </div>
+<div class="premium-access">
+    <a
+        href="https://wa.me/962787493283?text=Hello%2C%20I%27d%20like%20to%20purchase%20full%20access%20to%20Hannibal%20Vocabulary%20Challenge%20List%203%20%2843%20words%29."
+        class="premium-button"
+        target="_blank"
+        rel="noopener noreferrer"
+    >
+        <span class="premium-icon">🔓</span>
+        <span class="premium-title">
+            Unlock All 43 Vocabulary Words
+        </span>
+        <span class="premium-description">
+            Get full access to interactive quizzes,
+            instant feedback, and mistake review.
+        </span>
+        <span class="premium-cta">
+            💬 Contact Us on WhatsApp to Purchase
+        </span>
+    </a>
+</div>
       <div class="mode-card disabled" id="reviewBtn" onclick="startReview()">
         <h3>🔄 Review Mistakes</h3>
         <p id="reviewBtnText">Replay words you missed in your previous quiz.</p>
