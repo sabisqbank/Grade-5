@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hannibal Vocabulary Challenge – List 3</title>
+<style>
+  :root {
+    --primary: #d97706;
+    --primary-hover: #b45309;
+    --secondary: #1e293b;
+    --bg: #f8fafc;
+    --card-bg: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --correct-color: #16a34a;
+    --correct-bg: #f0fdf4;
+    --incorrect-color: #dc2626;
+    --incorrect-bg: #fef2f2;
+    --radius: 16px;
+    --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 720px;
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .header h1 {
+    color: var(--primary);
+    font-size: 28px;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  .header p {
+    color: var(--text-muted);
+    font-size: 15px;
+  }
+
+  /* Menu Styles */
+  .menu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .mode-card {
+    background: #fff;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .mode-card:hover {
+    border-color: var(--primary);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(217, 119, 6, 0.15);
+  }
+
+  .mode-card h3 {
+    color: var(--secondary);
+    margin-bottom: 8px;
+    font-size: 18px;
+  }
+
+  .mode-card p {
+    color: var(--text-muted);
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .mode-card.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    border-color: #e2e8f0 !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Game Screen */
+  .stats-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    background: #f1f5f9;
+    padding: 12px 20px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  .progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background-color: var(--primary);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .word-card {
+    background: #fff8f0;
+    border: 2px solid #fde68a;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .word-card .word {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--primary-hover);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .word-card .context {
+    font-style: italic;
+    color: #475569;
+    font-size: 15px;
+  }
+
+  .question-text {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+    color: var(--secondary);
+  }
+
+  .options-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+
+  .option-btn {
+    background-color: #ffffff;
+    border: 2px solid #cbd5e1;
+    border-radius: 10px;
+    padding: 14px 20px;
+    font-size: 15px;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    color: var(--text-main);
+    width: 100%;
+  }
+
+  .option-btn:hover:not(:disabled) {
+    border-color: var(--primary);
+    background-color: #fffbeb;
+  }
+
+  .option-btn .prefix {
+    font-weight: 700;
+    margin-right: 12px;
+    background: #e2e8f0;
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--secondary);
+    flex-shrink: 0;
+  }
+
+  .option-btn.correct {
+    background-color: var(--correct-bg) !important;
+    border-color: var(--correct-color) !important;
+    color: var(--correct-color) !important;
+    font-weight: 600;
+  }
+
+  .option-btn.correct .prefix {
+    background: var(--correct-color);
+    color: white;
+  }
+
+  .option-btn.incorrect {
+    background-color: var(--incorrect-bg) !important;
+    border-color: var(--incorrect-color) !important;
+    color: var(--incorrect-color) !important;
+    font-weight: 600;
+  }
+
+  .option-btn.incorrect .prefix {
+    background: var(--incorrect-color);
+    color: white;
+  }
+
+  /* Feedback Box */
+  .feedback-box {
+    display: none;
+    padding: 16px 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .feedback-box.correct {
+    display: block;
+    background-color: var(--correct-bg);
+    border: 1px solid var(--correct-color);
+    color: var(--correct-color);
+  }
+
+  .feedback-box.incorrect {
+    display: block;
+    background-color: var(--incorrect-bg);
+    border: 1px solid var(--incorrect-color);
+    color: var(--incorrect-color);
+  }
+
+  .feedback-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .feedback-desc {
+    font-size: 14px;
+    color: #334155;
+  }
+
+  /* Controls */
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary {
+    background-color: var(--primary);
+    color: white;
+    flex: 1;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--primary-hover);
+  }
+
+  .btn-secondary {
+    background-color: #e2e8f0;
+    color: var(--secondary);
+  }
+
+  .btn-secondary:hover {
+    background-color: #cbd5e1;
+  }
+
+  /* Results Screen */
+  .results-card {
+    text-align: center;
+    padding: 20px 0;
+  }
+
+  .badge-icon {
+    font-size: 64px;
+    margin-bottom: 12px;
+  }
+
+  .results-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--secondary);
+    margin-bottom: 8px;
+  }
+
+  .score-percentage {
+    font-size: 42px;
+    font-weight: 800;
+    color: var(--primary);
+    margin-bottom: 20px;
+  }
+
+  .results-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 12px;
+    border-radius: 8px;
+  }
+
+  .stat-box .number {
+    font-size: 20px;
+    font-weight: 700;
+  }
+
+  .stat-box .label {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 4px;
+  }
+
+  .hidden {
+    display: none !important;
+  }
+
+  @media (max-width: 500px) {
+    .menu-grid {
+      grid-template-columns: 1fr;
+    }
+    .container {
+      padding: 20px;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <!-- MENU SCREEN -->
+  <div id="menuScreen">
+    <div class="header">
+      <h1>Hannibal Challenge</h1>
+      <p>Vocabulary Learning Game – List 3</p>
+    </div>
+    <div class="menu-grid">
+      <div class="mode-card" onclick="startGame('quick')">
+        <h3>⚡ Quick Quiz</h3>
+        <p>10 random words for a quick vocabulary check.</p>
+      </div>
+      <div class="purchase-section">
+          <h3>Unlock the Complete Vocabulary Challenge!</h3>
+          <p>
+              Get full access to all 43 vocabulary words,
+            including interactive quizzes, instant feedback,
+             and mistake review.
+          </p>
+      </div>
+      <div class="mode-card disabled" id="reviewBtn" onclick="startReview()">
+        <h3>🔄 Review Mistakes</h3>
+        <p id="reviewBtnText">Replay words you missed in your previous quiz.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- GAME SCREEN -->
+  <div id="gameScreen" class="hidden">
+    <div class="stats-bar">
+      <span id="progressText">Question 1 of 10</span>
+      <span id="scoreText">Score: 0</span>
+    </div>
+    <div class="progress-bar-container">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+
+    <div class="word-card">
+      <div class="word" id="targetWord">WORD</div>
+      <div class="context" id="targetContext">"Context sentence goes here"</div>
+    </div>
+
+    <div class="question-text">What does this word mean?</div>
+
+    <div class="options-grid" id="optionsContainer">
+      <!-- Options dynamically generated -->
+    </div>
+
+    <div class="feedback-box" id="feedbackBox">
+      <div class="feedback-title" id="feedbackTitle">🎉 Correct! Great job!</div>
+      <div class="feedback-desc" id="feedbackDesc">Explanation text goes here.</div>
+    </div>
+
+    <div class="controls">
+      <button class="btn btn-secondary" onclick="confirmExit()">Quit</button>
+      <button class="btn btn-primary hidden" id="nextBtn" onclick="nextQuestion()">Next Question ➔</button>
+    </div>
+  </div>
+
+  <!-- RESULTS SCREEN -->
+  <div id="resultsScreen" class="hidden">
+    <div class="results-card">
+      <div class="badge-icon" id="badgeIcon">🏆</div>
+      <div class="results-title" id="performanceTitle">Vocabulary Master!</div>
+      <div class="score-percentage" id="scorePercentage">100%</div>
+
+      <div class="results-stats">
+        <div class="stat-box">
+          <div class="number" id="resTotal">10</div>
+          <div class="label">Total Words</div>
+        </div>
+        <div class="stat-box">
+          <div class="number" style="color: var(--correct-color);" id="resCorrect">10</div>
+          <div class="label">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="number" style="color: var(--incorrect-color);" id="resIncorrect">0</div>
+          <div class="label">Incorrect</div>
+        </div>
+      </div>
+
+      <div style="display: flex; gap: 12px; flex-direction: column;">
+        <button class="btn btn-primary" id="reviewMistakesBtn" onclick="startReview()">Review Missed Words</button>
+        <button class="btn btn-secondary" onclick="showMenu()">Main Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const vocabList = [
+  {
+    word: "Cement",
+    context: "with strong cement keeping the stones together",
+    def: "A mixture of lime and clay used in building to make floors, join bricks together, etc.",
+    distractors: [
+      "A type of soft wood used for carving doors and window frames.",
+      "A liquid fuel made from oil used to light decorative lamps.",
+      "A heavy metal rod used to break large stones in quarries."
+    ]
+  },
+  {
+    word: "Columns",
+    context: "the sight of the massive stone columns and steps made Hannibal relax",
+    def: "Something long and narrow, a vertical part of a page.",
+    distractors: [
+      "Horizontal wooden beams supporting a heavy stone ceiling.",
+      "Square marble tiles used to cover temple courtyard floors.",
+      "Rounded metal arches placed at the entry of ancient cities."
+    ]
+  },
+  {
+    word: "Heartily",
+    context: "Hamilcar laughed heartily",
+    def: "With energy and enthusiasm.",
+    distractors: [
+      "In a quiet and nervous manner.",
+      "With deep sorrow and regret.",
+      "In a slow and sleepy voice."
+    ]
+  },
+  {
+    word: "Oaths",
+    context: "the temple was designed for prayers and oaths",
+    def: "A solemn promise.",
+    distractors: [
+      "A long historical narrative.",
+      "A sacred ritual hymn.",
+      "A list of city laws."
+    ]
+  },
+  {
+    word: "Observe",
+    context: "Hamilcar added, you will not be in battle, you can observe",
+    def: "To watch and notice, or to make a remark.",
+    distractors: [
+      "To join directly in a fight or war.",
+      "To run away quickly from danger.",
+      "To lead soldiers into open battle."
+    ]
+  },
+  {
+    word: "Pillars",
+    context: "they could cross into Spain via Gibraltar (Pillars of Hercules)",
+    def: "A tall post, often made from stone or wood.",
+    distractors: [
+      "A wide ditch filled with water.",
+      "A sharp iron spear for defense.",
+      "A heavy anchor used on ships."
+    ]
+  },
+  {
+    word: "Terrific",
+    context: "what a terrific difference between the temple and city walls",
+    def: "Excellent.",
+    distractors: [
+      "Frightening.",
+      "Disappointing.",
+      "Mysterious."
+    ]
+  },
+  {
+    word: "Altar",
+    context: "Hamilcar held one of Hannibal’s hands while Hannibal placed the other on the altar",
+    def: "A special table for religious offerings.",
+    distractors: [
+      "A tall shield for protection in war.",
+      "A decorated throne for a supreme king.",
+      "A heavy stone wall around a courtyard."
+    ]
+  },
+  {
+    word: "Associated",
+    context: "To have a name associated with so much power made him swell with pride",
+    def: "Linked to someone or something.",
+    distractors: [
+      "Separated or kept far apart from.",
+      "Forgotten by friends and allies.",
+      "Defeated in a famous battle."
+    ]
+  },
+  {
+    word: "Devoted",
+    context: "Hamilcar was too solid, strong and devoted",
+    def: "Loyal and loving, or Enthusiastic.",
+    distractors: [
+      "Greedy and selfish with wealth.",
+      "Lazy and unmotivated to work.",
+      "Unfriendly and harsh to family."
+    ]
+  },
+  {
+    word: "Embraced",
+    context: "Father and Son embraced",
+    def: "To hug and put your arms around somebody. or to include.",
+    distractors: [
+      "To argue loudly about a decision.",
+      "To shake hands in a formal agreement.",
+      "To walk away silently from someone."
+    ]
+  },
+  {
+    word: "Engrossed",
+    context: "they walked back home, engrossed in talk about the campaign for Spain",
+    def: "To occupy fully, or To absorb the attention of.",
+    distractors: [
+      "Bored and paying no attention.",
+      "Confused and unsure what to say.",
+      "Angry and refusing to speak."
+    ]
+  },
+  {
+    word: "Scurried",
+    context: "the slave scurried to the kitchen to gather the small meal",
+    def: "To rush around.",
+    distractors: [
+      "To walk slowly.",
+      "To sit quietly.",
+      "To fall down."
+    ]
+  },
+  {
+    word: "Fleets",
+    context: "Remember that our fleets had been destroyed by the Romans",
+    def: "A group of ships, aircraft, or vehicles owned by one country or company.",
+    distractors: [
+      "A group of foot soldiers marching on land.",
+      "A collection of weapons stored in a fortress.",
+      "A group of horses used for pulling chariots."
+    ]
+  }
+];
+
+let currentGameList = [];
+let currentIndex = 0;
+let score = 0;
+let missedWords = [];
+let currentMode = '';
+let answered = false;
+
+function shuffleArray(array) {
+  let arr = [...array];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function showMenu() {
+  document.getElementById('menuScreen').classList.remove('hidden');
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+
+  const reviewBtn = document.getElementById('reviewBtn');
+  if (missedWords.length > 0) {
+    reviewBtn.classList.remove('disabled');
+    document.getElementById('reviewBtnText').innerText = `Replay ${missedWords.length} word(s) you missed.`;
+  } else {
+    reviewBtn.classList.add('disabled');
+    document.getElementById('reviewBtnText').innerText = 'Replay words you missed in your previous quiz.';
+  }
+}
+
+function startGame(mode) {
+  currentMode = mode;
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+
+  if (mode === 'quick') {
+    currentGameList = shuffleArray(vocabList).slice(0, 10);
+    missedWords = [];
+  } else if (mode === 'full') {
+    currentGameList = shuffleArray(vocabList);
+    missedWords = [];
+  } else if (mode === 'practice') {
+    currentGameList = shuffleArray(vocabList);
+  }
+
+  document.getElementById('menuScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+
+  loadQuestion();
+}
+
+function startReview() {
+  if (missedWords.length === 0) return;
+  currentGameList = shuffleArray([...missedWords]);
+  currentMode = 'review';
+  currentIndex = 0;
+  score = 0;
+  answered = false;
+
+  document.getElementById('menuScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.add('hidden');
+  document.getElementById('gameScreen').classList.remove('hidden');
+
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  const currentItem = currentGameList[currentIndex];
+
+  // UI Updates
+  document.getElementById('progressText').innerText = `Question ${currentIndex + 1} of ${currentGameList.length}`;
+  document.getElementById('scoreText').innerText = `Score: ${score}`;
+  document.getElementById('progressBar').style.width = `${((currentIndex) / currentGameList.length) * 100}%`;
+
+  document.getElementById('targetWord').innerText = currentItem.word;
+  document.getElementById('targetContext').innerText = currentItem.context;
+
+  document.getElementById('feedbackBox').className = 'feedback-box';
+  document.getElementById('nextBtn').classList.add('hidden');
+
+  // Create options
+  const options = shuffleArray([
+    { text: currentItem.def, isCorrect: true },
+    { text: currentItem.distractors[0], isCorrect: false },
+    { text: currentItem.distractors[1], isCorrect: false },
+    { text: currentItem.distractors[2], isCorrect: false }
+  ]);
+
+  const optionsContainer = document.getElementById('optionsContainer');
+  optionsContainer.innerHTML = '';
+
+  const prefixes = ['A', 'B', 'C', 'D'];
+  options.forEach((opt, index) => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn';
+    btn.innerHTML = `<span class="prefix">${prefixes[index]}</span> <span>${opt.text}</span>`;
+    btn.onclick = () => handleAnswer(opt.isCorrect, btn, currentItem);
+    optionsContainer.appendChild(btn);
+  });
+}
+
+function handleAnswer(isCorrect, selectedBtn, item) {
+  if (answered) return;
+  answered = true;
+
+  const allButtons = document.querySelectorAll('.option-btn');
+  allButtons.forEach(btn => btn.disabled = true);
+
+  const feedbackBox = document.getElementById('feedbackBox');
+  const feedbackTitle = document.getElementById('feedbackTitle');
+  const feedbackDesc = document.getElementById('feedbackDesc');
+
+  if (isCorrect) {
+    selectedBtn.classList.add('correct');
+    feedbackBox.className = 'feedback-box correct';
+    feedbackTitle.innerText = '🎉 Correct! Great job!';
+    feedbackDesc.innerText = `"${item.word}" means: ${item.def}`;
+    if (currentMode !== 'practice') {
+      score++;
+      document.getElementById('scoreText').innerText = `Score: ${score}`;
+    }
+  } else {
+    selectedBtn.classList.add('incorrect');
+    feedbackBox.className = 'feedback-box incorrect';
+    feedbackTitle.innerText = '❌ Not quite!';
+    feedbackDesc.innerText = `"${item.word}" means: ${item.def}`;
+
+    if (!missedWords.some(w => w.word === item.word)) {
+      missedWords.push(item);
+    }
+
+    // Highlight correct choice
+    allButtons.forEach(btn => {
+      if (btn.innerText.includes(item.def)) {
+        btn.classList.add('correct');
+      }
+    });
+  }
+
+  document.getElementById('nextBtn').classList.remove('hidden');
+}
+
+function nextQuestion() {
+  currentIndex++;
+  if (currentIndex < currentGameList.length) {
+    loadQuestion();
+  } else {
+    showResults();
+  }
+}
+
+function showResults() {
+  document.getElementById('gameScreen').classList.add('hidden');
+  document.getElementById('resultsScreen').classList.remove('hidden');
+
+  const total = currentGameList.length;
+  const correct = score;
+  const incorrect = total - correct;
+  const percentage = Math.round((correct / total) * 100);
+
+  document.getElementById('resTotal').innerText = total;
+  document.getElementById('resCorrect').innerText = correct;
+  document.getElementById('resIncorrect').innerText = incorrect;
+  document.getElementById('scorePercentage').innerText = `${percentage}%`;
+
+  const badgeIcon = document.getElementById('badgeIcon');
+  const perfTitle = document.getElementById('performanceTitle');
+
+  if (percentage >= 90) {
+    badgeIcon.innerText = '🏆';
+    perfTitle.innerText = 'Vocabulary Master!';
+  } else if (percentage >= 80) {
+    badgeIcon.innerText = '🌟';
+    perfTitle.innerText = 'Excellent!';
+  } else if (percentage >= 70) {
+    badgeIcon.innerText = '👍';
+    perfTitle.innerText = 'Good Job!';
+  } else if (percentage >= 60) {
+    badgeIcon.innerText = '📚';
+    perfTitle.innerText = 'Keep Practicing!';
+  } else {
+    badgeIcon.innerText = '💪';
+    perfTitle.innerText = 'Keep Learning!';
+  }
+
+  const reviewBtn = document.getElementById('reviewMistakesBtn');
+  if (missedWords.length > 0) {
+    reviewBtn.classList.remove('hidden');
+    reviewBtn.innerText = `Review ${missedWords.length} Missed Word(s)`;
+  } else {
+    reviewBtn.classList.add('hidden');
+  }
+}
+
+function confirmExit() {
+  if (confirm("Are you sure you want to quit? Your progress will be lost.")) {
+    showMenu();
+  }
+}
+</script>
+</body>
+</html>
